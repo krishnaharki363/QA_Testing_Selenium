@@ -5,7 +5,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 driver = webdriver.Chrome()
 driver.maximize_window()
-driver.get("Platform URL")
+driver.get("https://test.hgn.com.np/auth")
 
 wait = WebDriverWait(driver, 20)
 
@@ -19,10 +19,10 @@ login_password = wait.until(
 )
 
 login_email.clear()
-login_email.send_keys("xyz@gmail.com")
+login_email.send_keys("hgnsales@hgn.com.np")
 
 login_password.clear()
-login_password.send_keys("Password")
+login_password.send_keys("HgnSales@123")
 
 # Find all buttons and pick the SIGN IN one
 buttons = wait.until(
