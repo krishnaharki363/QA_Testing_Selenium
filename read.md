@@ -1,7 +1,32 @@
-## Selenium Testing Exploration
+# 🧪 QA Automation with Selenium
 
-I explored automated testing of web applications using **Selenium**. During this exploration, I learned the basic concepts of how Selenium can be used to automate browser actions and test application functionalities.
+This project focuses on exploring **Quality Assurance (QA) automation** using **Selenium WebDriver (Python)**. It simulates real user workflows such as login and order creation in a live web application.
 
-Selenium makes it easier to simulate user interactions such as clicking buttons, filling forms, and navigating between pages. Through this simple experimentation, I understood how automated testing tools can help developers and testers verify application behavior efficiently.
+## 🚀 Project Overview
+The goal of this project is to understand and implement:
+- Automated UI testing
+- End-to-end workflow automation
+- Real-world QA practices
 
-This was a basic hands-on exploration to understand how automated testing works using Selenium.
+The automation is performed on:
+👉 https://test.hgn.com.np
+
+## 🔧 Features Implemented
+- ✅ Automated Login System
+- ✅ Dashboard Navigation
+- ✅ Create Order Workflow Automation
+- ✅ Dynamic Element Handling using XPath
+- ✅ Explicit Waits (WebDriverWait)
+- ✅ Debugging & Locator Inspection
+
+## 🧠 Learning Outcomes
+- Understanding Selenium architecture
+- Handling dynamic web elements
+- Writing maintainable automation scripts
+- Debugging real-time automation failures
+- Simulating user behavior for testing
+
+## 🛠️ Tech Stack
+- Python 🐍
+- Selenium WebDriver 🌐
+- ChromeDriver
