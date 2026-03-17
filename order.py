@@ -1,119 +1,113 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
+import traceback
 
-URL = "https://test.hgn.com.np/sales-company"
 
-# ----------------------------
-# Sample travellers data
-# ----------------------------
-travellers = [
-    {
-        "first_name": "Ram",
-        "last_name": "Sharma",
-        "email": "ram@example.com",
-        "phone": "9800000001",
-        "passport": "P1234567"
-    },
-    {
-        "first_name": "Sita",
-        "last_name": "Thapa",
-        "email": "sita@example.com",
-        "phone": "9800000002",
-        "passport": "P7654321"
-    }
-]
+def login(driver, wait):
+    driver.get("https://test.hgn.com.np/login")
+    print("Login page opened")
 
-# ----------------------------
-# Setup browser
-# ----------------------------
-driver = webdriver.Chrome()
-driver.maximize_window()
-wait = WebDriverWait(driver, 20)
+    email = "hgnsales@hgn.com.np"
+    password = "HgnSales@123"
 
-driver.get(URL)
-
-# ----------------------------
-# LOGIN STEP
-# ----------------------------
-# Replace these selectors after inspecting the real page
-
-username = input("hgnnsales@hgn.com.np")
-password = input("HgnSales@1234")
-
-# Example login fields
-wait.until(EC.presence_of_element_located((By.NAME, "email"))).send_keys(username)
-driver.find_element(By.NAME, "password").send_keys(password)
-
-# Example login button
-driver.find_element(By.XPATH, "//button[contains(., 'Login') or contains(., 'Log in')]").click()
-
-print("Logged in attempt done...")
-time.sleep(3)
-
-# ----------------------------
-# FUNCTION: fill traveller form
-# ----------------------------
-def fill_traveller_form(traveller):
-    # Replace these locators with actual ones from your site
-    wait.until(EC.presence_of_element_located((By.NAME, "firstName"))).clear()
-    driver.find_element(By.NAME, "firstName").send_keys(traveller["first_name"])
-
-    driver.find_element(By.NAME, "lastName").clear()
-    driver.find_element(By.NAME, "lastName").send_keys(traveller["last_name"])
-
-    driver.find_element(By.NAME, "email").clear()
-    driver.find_element(By.NAME, "email").send_keys(traveller["email"])
-
-    driver.find_element(By.NAME, "phone").clear()
-    driver.find_element(By.NAME, "phone").send_keys(traveller["phone"])
-
-    driver.find_element(By.NAME, "passportNumber").clear()
-    driver.find_element(By.NAME, "passportNumber").send_keys(traveller["passport"])
-
-# ----------------------------
-# ADD TRAVELLERS
-# ----------------------------
-for i, traveller in enumerate(travellers):
-    # Click Add Traveller for first and additional travellers
-    add_traveller_btn = wait.until(
-        EC.element_to_be_clickable((By.XPATH, "//button[contains(., 'Add Traveller')]"))
+    login_email = wait.until(
+        EC.visibility_of_element_located((By.XPATH, "(//input[@placeholder='Email'])[2]"))
     )
-    add_traveller_btn.click()
+    login_password = wait.until(
+        EC.visibility_of_element_located((By.XPATH, "(//input[@placeholder='Password'])[2]"))
+    )
 
-    time.sleep(1)
-    fill_traveller_form(traveller)
+    login_email.clear()
+    login_email.send_keys(email)
 
-    print(f"Traveller {i + 1} added")
+    login_password.clear()
+    login_password.send_keys(password)
 
-    time.sleep(1)
+    buttons = wait.until(
+        EC.presence_of_all_elements_located((By.TAG_NAME, "button"))
+    )
 
-# ----------------------------
-# CLICK CONTINUE
-# ----------------------------
-continue_btn = wait.until(
-    EC.element_to_be_clickable((By.XPATH, "//button[contains(., 'Continue')]"))
-)
-continue_btn.click()
+    sign_in_button = None
+    for btn in buttons:
+        if btn.text.strip().upper() == "SIGN IN":
+            sign_in_button = btn
+            break
 
-print("Moved to Trip & Coverage Setup")
+    if sign_in_button is None:
+        raise Exception("SIGN IN button not found")
 
-# ----------------------------
-# FILL TRIP & COVERAGE
-# ----------------------------
-# Replace with actual locators from the page
-# Example:
-# wait.until(EC.presence_of_element_located((By.NAME, "destination"))).send_keys("Nepal")
-# driver.find_element(By.NAME, "startDate").send_keys("2026-03-20")
-# driver.find_element(By.NAME, "endDate").send_keys("2026-03-25")
-# driver.find_element(By.XPATH, "//button[contains(., 'Next') or contains(., 'Proceed')]").click()
+    driver.execute_script("arguments[0].click();", sign_in_button)
+    print("Logged in successfully")
 
-print("Now inspect Trip & Coverage fields and add the correct selectors.")
 
-# Keep browser open for checking
-input("Press Enter to close browser...")
-driver.quit()
+def open_create_order(driver, wait):
+    create_order_btn = wait.until(
+        EC.element_to_be_clickable((By.XPATH, "//button[contains(., 'Create Order')]"))
+    )
+    driver.execute_script("arguments[0].click();", create_order_btn)
+    print("Clicked Create Order")
+
+
+def debug_page(driver):
+    print("\nCurrent URL:", driver.current_url)
+    print("Page title:", driver.title)
+
+    inputs = driver.find_elements(By.TAG_NAME, "input")
+    print(f"\nFound {len(inputs)} input fields:\n")
+
+    for i, inp in enumerate(inputs, start=1):
+        try:
+            print(
+                f"{i}. placeholder={inp.get_attribute('placeholder')!r}, "
+                f"name={inp.get_attribute('name')!r}, "
+                f"type={inp.get_attribute('type')!r}, "
+                f"value={inp.get_attribute('value')!r}"
+            )
+        except Exception:
+            print(f"{i}. Could not inspect input")
+
+    buttons = driver.find_elements(By.TAG_NAME, "button")
+    print(f"\nFound {len(buttons)} buttons:\n")
+
+    for i, btn in enumerate(buttons, start=1):
+        try:
+            print(f"{i}. text={btn.text.strip()!r}")
+        except Exception:
+            print(f"{i}. Could not inspect button")
+
+
+def main():
+    driver = webdriver.Chrome()
+    driver.maximize_window()
+    wait = WebDriverWait(driver, 30)
+
+    try:
+        login(driver, wait)
+
+        wait.until(EC.url_contains("/sales-company"))
+        print("Current URL after login:", driver.current_url)
+
+        open_create_order(driver, wait)
+
+        wait.until(EC.url_contains("/travelers/new"))
+        wait.until(EC.presence_of_element_located((By.TAG_NAME, "body")))
+        time.sleep(3)
+
+        print("Traveller page opened successfully")
+        debug_page(driver)
+
+        input("\nPress Enter to close browser...")
+    except Exception as e:
+        print("Error occurred:", e)
+        traceback.print_exc()
+        input("Press Enter to close browser...")
+    finally:
+        driver.quit()
+
+
+if __name__ == "__main__":
+    main()
+    
