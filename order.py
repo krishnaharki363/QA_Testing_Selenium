@@ -7,11 +7,11 @@ import traceback
 
 
 def login(driver, wait):
-    driver.get("https://test.hgn.com.np/login")
+    driver.get("Your_URL")
     print("Login page opened")
 
-    email = "hgnsales@hgn.com.np"
-    password = "HgnSales@123"
+    email = "Your_Email"
+    password = "Your_Password"
 
     login_email = wait.until(
         EC.visibility_of_element_located((By.XPATH, "(//input[@placeholder='Email'])[2]"))
@@ -110,4 +110,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    
